@@ -18,38 +18,11 @@ abstract class BaseDataset {
     const TS_ONE_WEEK = 604800;
 
     /**
-     * var to keep track what we last updated
-     *  when doing a new update we can continue from this point
-     * @var DateTime $lastUpdated
-     */
-    protected $lastUpdated = null;
-
-    /**
-     * var to make sure we only update the dataset once per request
-     * @var boolean $updated
-     */
-    protected $updated = false;
-
-    /**
-     * boolean to check weither or not the dataset is completely up-to-date
-     *
-     * @var boolean $uptodate
-     */
-    public $uptodate = false;
-
-    /**
      * threshold from where we start aggregating by hour
      *
      * @var  int    $hourlyThreshold
      */
-    protected $hourlyThreshold = self::TS_ONE_DAY;
-
-    /*
-     * final datasets used for output
-     */
-    protected $noMvAvg         = array();
-    protected $dailyMvAvg      = array();
-    protected $weeklyMvAvg     = array();
+    protected $hourlyThreshold = self::TS_ONE_WEEK;
 
     /**
      * the timestamps grouped by their hour
@@ -57,18 +30,9 @@ abstract class BaseDataset {
      */
     protected $tsByHour = array();
 
-    /*
-     * temporary datasets to use when replacing ticks with their hourly average
-     */
-    protected $hourlyNoMvAvg     = array();
-    protected $hourlyDailyMvAvg  = array();
-    protected $hourlyWeeklyMvAvg = array();
-
-    /*
-     * cache datasets to avoid having to filter the whole dataset all the time
-     */
-    protected $past24Hours = array();
-    protected $pastWeek    = array();
+    Prtoected $ticks = array();
+    protected $hourlyNoMvAvg = array();
+    protected $pastWeek = array();
 
     /*
      * helper methods to round timestamps by hour / day / week
@@ -83,14 +47,6 @@ abstract class BaseDataset {
         return ceil($ts / self::TS_ONE_WEEK) * self::TS_ONE_WEEK;
     }
 
-    /**
-     * update the current dataset with new values from the database
-     *  if posible only with values since our lastUpdated moment
-     *
-     * when implementing this it should loop over all to-be-added ticks (in asc order)
-     *  and call processTick
-     * like ItemDataset and GemExchangeDataset do
-     */
     abstract protected function updateDataset();
 
     /**
